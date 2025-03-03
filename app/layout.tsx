@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import "@cloudscape-design/global-styles/index.css"
 
 export const metadata: Metadata = {
   title: 'Next.js on GitHub Pages',
