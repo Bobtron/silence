@@ -2,16 +2,14 @@
 import React, {useState} from 'react';
 import {
   AppLayout,
-  Badge,
   BreadcrumbGroup, Container, ContentLayout,
   Flashbar, Header,
   HelpPanel, Link,
-  SideNavigation, SideNavigationProps,
+  SideNavigation,
   SplitPanel,
 } from '@cloudscape-design/components';
 import {I18nProvider} from '@cloudscape-design/components/i18n';
 import messages from '@cloudscape-design/components/i18n/messages/all.en';
-import FollowDetail = SideNavigationProps.FollowDetail;
 
 const LOCALE = 'en';
 
@@ -21,9 +19,7 @@ const Targets = () => <div>Targets content</div>;
 const ArrivalTimes = () => <div>Arrival Times content</div>;
 const Armies = () => <div>Armies content</div>;
 
-export default function AppLayoutPreview({children}: {
-  children: React.ReactNode
-}) {
+export default function AppLayoutPreview() {
 
   const [activeHref, setActiveHref] = useState(
     "#/readme"
@@ -58,11 +54,11 @@ export default function AppLayoutPreview({children}: {
               text: 'Service name',
             }}
             items={[
-              { type: "link", text: "Read Me", href: "#/readme"},
-              { type: "link", text: "Source Cities", href: "#/source" },
-              { type: "link", text: "Targets", href: "#/target" },
-              { type: "link", text: "Arrival Times", href: "#/arrival" },
-              { type: "link", text: "Armies", href: "#/army" },
+              {type: "link", text: "Read Me", href: "#/readme"},
+              {type: "link", text: "Source Cities", href: "#/source"},
+              {type: "link", text: "Targets", href: "#/target"},
+              {type: "link", text: "Arrival Times", href: "#/arrival"},
+              {type: "link", text: "Armies", href: "#/army"},
             ]}
           />
         }
