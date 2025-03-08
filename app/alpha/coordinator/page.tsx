@@ -10,24 +10,17 @@ import {
 } from '@cloudscape-design/components';
 import {I18nProvider} from '@cloudscape-design/components/i18n';
 import messages from '@cloudscape-design/components/i18n/messages/all.en';
-import Source from '../../coordinator/source';
-import Target from '../../coordinator/target';
-import Arrival from '../../coordinator/arrival';
-import Army from '../../coordinator/army';
+import Target from '../../coordinator/targetContent';
+import Arrival from '../../coordinator/arrivalContent';
+import Army from '../../coordinator/armyContent';
 import ChangeDetail = AppLayoutProps.ChangeDetail;
 
 const LOCALE = 'en';
 
-const ReadMe = () => <div>Home page, read me is work in progress.</div>;
-// const SourceCities = () => <div>Source Cities content</div>;
-// const Targets = () => <div>Targets content</div>;
-// const ArrivalTimes = () => <div>Arrival Times content</div>;
-// const Armies = () => <div>Armies content</div>;
-
 export default function AppLayoutPreview() {
 
   const [activeHref, setActiveHref] = useState(
-    "#/readme"
+    "#/army"
   );
 
   const [toolsOpen, setToolsOpen] = useState(
@@ -63,11 +56,9 @@ export default function AppLayoutPreview() {
               text: 'Service name',
             }}
             items={[
-              {type: "link", text: "Read Me", href: "#/readme"},
-              {type: "link", text: "Source Cities", href: "#/source"},
+              {type: "link", text: "Armies", href: "#/army"},
               {type: "link", text: "Targets", href: "#/target"},
               {type: "link", text: "Arrival Times", href: "#/arrival"},
-              {type: "link", text: "Armies", href: "#/army"},
             ]}
           />
         }
@@ -111,11 +102,9 @@ export default function AppLayoutPreview() {
               }
             >
               <div className="contentPlaceholder">
-                {activeHref === '#/readme' && <ReadMe/>}
-                {activeHref === '#/source' && <Source/>}
+                {activeHref === '#/army' && <Army/>}
                 {activeHref === '#/target' && <Target/>}
                 {activeHref === '#/arrival' && <Arrival/>}
-                {activeHref === '#/army' && <Army/>}
               </div>
             </Container>
           </ContentLayout>

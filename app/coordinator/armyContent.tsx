@@ -7,6 +7,19 @@ import Button from "@cloudscape-design/components/button";
 import Header from "@cloudscape-design/components/header";
 import {useState} from "react";
 
+enum Race {
+  Human = "Human",
+  Elf = "Elf",
+  Dwarf = "Dwarf",
+  Orc = "Orc",
+}
+
+interface Player {
+  playerName: string;
+  race: Race;
+  timezone: string; // TODO this needs to be timezone object
+}
+
 interface Source {
   id: string;
   playerName: string;
@@ -15,7 +28,7 @@ interface Source {
   yPos: number;
 }
 
-export default function Source() {
+export default function Army() {
   const [
     selectedItems,
     setSelectedItems
@@ -59,8 +72,8 @@ export default function Source() {
   return (
     <Table
       onSelectionChange={({ detail }) => {
-          setSelectedItems(detail.selectedItems.map(obj => ({id: obj.id})));
-        }
+        setSelectedItems(detail.selectedItems.map(obj => ({id: obj.id})));
+      }
       }
       selectedItems={selectedItems}
       columnDefinitions={[

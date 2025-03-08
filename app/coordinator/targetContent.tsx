@@ -1,6 +1,6 @@
 'use client';
 
-export default function Target() {
+export default function TargetContent() {
   return (
     <div>Targets content</div>
   );

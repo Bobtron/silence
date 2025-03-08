@@ -1,6 +1,6 @@
 'use client';
 
-export default function Arrival() {
+export default function ArrivalContent() {
   return (
     <div>Arrival Times content</div>
   );
