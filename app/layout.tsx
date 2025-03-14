@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import "@cloudscape-design/global-styles/index.css"
 
 export const metadata: Metadata = {
-  title: 'Next.js on GitHub Pages',
-  description: 'Deploy your static Next.js site to GitHub Pages.',
+  title: 'The College of Silence',
+  description: 'The Knowledge and Wisdom Exchange.',
 };
 
 export default function RootLayout({

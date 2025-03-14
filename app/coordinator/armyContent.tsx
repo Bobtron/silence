@@ -6,109 +6,92 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import Button from "@cloudscape-design/components/button";
 import Header from "@cloudscape-design/components/header";
 import {useState} from "react";
-
-enum Race {
-  Human = "Human",
-  Elf = "Elf",
-  Dwarf = "Dwarf",
-  Orc = "Orc",
-}
-
-interface Player {
-  playerName: string;
-  race: Race;
-  timezone: string; // TODO this needs to be timezone object
-}
-
-interface Source {
-  id: string;
-  playerName: string;
-  townName: string;
-  xPos: number;
-  yPos: number;
-}
+import {
+  armyTableItemsAtom,
+  expandedArmyTableItemsAtom,
+  selectedArmyTableItemsAtom,
+  useArmyTableItems
+} from "@/app/lib/storage/armyTableAtoms";
+import {ArmyTableItem} from "@/app/lib/objects/coordinatorObjects";
+import {useAtom, useAtomValue} from "jotai/index";
 
 export default function Army() {
-  const [
-    selectedItems,
-    setSelectedItems
-  ] = useState<Array<{ id: string }>>([]);
+  // const [
+  //   selectedItems,
+  //   setSelectedItems
+  // ] = useState<Array<{ id: string }>>([]);
 
-  const [
-    tableItems,
-    setTableItems
-  ] = useState([
-    {
-      id: "0",
-      playerName: "King Sigurd",
-      townName: "Centrum",
-      xPos: 0,
-      yPos: 0,
-    },
-    {
-      id: "1",
-      playerName: "Clan Dollogh",
-      townName: "Lasthold",
-      xPos: -651,
-      yPos: -2382,
-    },
-    {
-      id: "2",
-      playerName: "Undying Flame",
-      townName: "Verity City",
-      xPos: -923,
-      yPos: 113,
-    },
-    {
-      id: "3",
-      playerName: "Brotherhood of Kerala",
-      townName: "City of Temples",
-      xPos: -321,
-      yPos: -847,
-    }
-  ])
+  // const [
+  //   expandedItems,
+  //   setExpandedItems
+  // ] = useState<Array<{ id: string }>>([]);
 
+  // const [
+  //   armyTableItems,
+  //   setArmyTableItems,
+  // ] = useAtom(armyTableItemsAtom);
+
+  const armyTableItems = useAtomValue(armyTableItemsAtom);
+  const expandedItems = useAtomValue(expandedArmyTableItemsAtom);
+  const selectedItems = useAtomValue(selectedArmyTableItemsAtom);
+
+  const {
+    resetArmyTableItems,
+    onArmyTableItemSelect,
+    onArmyTableItemExpand,
+  } = useArmyTableItems();
 
   return (
     <Table
       onSelectionChange={({ detail }) => {
-        setSelectedItems(detail.selectedItems.map(obj => ({id: obj.id})));
+        onArmyTableItemSelect(detail.selectedItems);
       }
       }
       selectedItems={selectedItems}
       columnDefinitions={[
         {
-          id: "playerName",
-          header: "Player",
-          cell: (item: Source) => item.playerName,
+          id: "id",
+          header: "id",
+          cell: (item: ArmyTableItem) => item.id,
+          isRowHeader: true,
         },
         {
-          id: "townName",
-          header: "Town",
-          cell: (item: Source) => item.townName,
+          id: "name",
+          header: "Player/Town/Army Name",
+          cell: (item: ArmyTableItem) => item.name,
         },
         {
-          id: "xPos",
-          header: "X Position",
-          cell: (item: Source) => item.xPos,
+          id: "position",
+          header: "Position",
+          cell: (item: ArmyTableItem) => item.position,
         },
-        {
-          id: "yPos",
-          header: "Y Position",
-          cell: (item: Source) => item.yPos,
-        }
       ]}
+      expandableRows={{
+        getItemChildren: (item: ArmyTableItem) => item.children ?? [],
+        isItemExpandable: (item: ArmyTableItem) => Boolean(item.children),
+        expandedItems: expandedItems,
+        onExpandableItemToggle: ({ detail }) =>{
+          onArmyTableItemExpand(detail)
+        }
+          // setExpandedItems((prev: ArmyTableItem[]) => {
+          //   const next = new Set(
+          //     (prev ?? []).map((item: {id: string}) => item.id)
+          //   );
+          //   detail.expanded
+          //     ? next.add(detail.item.id)
+          //     : next.delete(detail.item.id);
+          //   return [...next].map(id => ({ id }));
+          // }),
+      }}
       columnDisplay={[
-        { id: "playerName", visible: true },
-        { id: "townName", visible: true },
-        { id: "xPos", visible: true },
-        { id: "yPos", visible: true },
+        { id: "id", visible: false },
+        { id: "name", visible: true },
+        { id: "position", visible: true },
       ]}
       enableKeyboardNavigation
-      items={tableItems}
+      items={armyTableItems}
       loadingText="Loading resources"
       selectionType="multi"
-      stickyColumns={{ first: 0, last: 1 }}
       trackBy="id"
       empty={
         <Box
@@ -125,14 +108,18 @@ export default function Army() {
       header={
         <Header
           counter={
-            "(" + (selectedItems.length ? selectedItems.length + "/" : "") + tableItems.length + ")"
+            // "(" + (selectedItems.length ? selectedItems.length + "/" : "") + armyTableItems.length + ")"
+            "(" + selectedItems.length + ")"
           }
           actions={
             <SpaceBetween
               direction="horizontal"
               size="xs"
             >
-              <Button>Secondary button</Button>
+              <Button
+                onClick={resetArmyTableItems}>
+                Reset Table
+              </Button>
               <Button variant="primary">
                 Create resource
               </Button>
@@ -140,16 +127,16 @@ export default function Army() {
                 variant="normal"
                 onClick={
                   () => {
-                    const selectedItemsSet: Set<string> = new Set();
-                    selectedItems.forEach((obj: {id: string}) => {
-                      selectedItemsSet.add(obj.id);
-                    });
-
-                    const modifiedTableItems: Source[] = tableItems.filter((item: Source) => {
-                      return !selectedItemsSet.has(item.id);
-                    });
-                    setTableItems(modifiedTableItems);
-                    setSelectedItems([]);
+                    // const selectedItemsSet: Set<string> = new Set();
+                    // selectedItems.forEach((obj: {id: string}) => {
+                    //   selectedItemsSet.add(obj.id);
+                    // });
+                    //
+                    // const modifiedTableItems: ArmyTableItem[] = armyTableItems.filter((item: ArmyTableItem) => {
+                    //   return !selectedItemsSet.has(item.id);
+                    // });
+                    // setArmyTableItems(modifiedTableItems);
+                    // setSelectedItems([]);
                   }
                 }
               >
