@@ -16,20 +16,6 @@ import {ArmyTableItem} from "@/app/lib/objects/coordinatorObjects";
 import {useAtom, useAtomValue} from "jotai/index";
 
 export default function Army() {
-  // const [
-  //   selectedItems,
-  //   setSelectedItems
-  // ] = useState<Array<{ id: string }>>([]);
-
-  // const [
-  //   expandedItems,
-  //   setExpandedItems
-  // ] = useState<Array<{ id: string }>>([]);
-
-  // const [
-  //   armyTableItems,
-  //   setArmyTableItems,
-  // ] = useAtom(armyTableItemsAtom);
 
   const armyTableItems = useAtomValue(armyTableItemsAtom);
   const expandedItems = useAtomValue(expandedArmyTableItemsAtom);
@@ -43,9 +29,8 @@ export default function Army() {
 
   return (
     <Table
-      onSelectionChange={({ detail }) => {
-        onArmyTableItemSelect(detail.selectedItems);
-      }
+      onSelectionChange={({ detail }) =>
+        onArmyTableItemSelect(detail.selectedItems)
       }
       selectedItems={selectedItems}
       columnDefinitions={[
@@ -68,20 +53,11 @@ export default function Army() {
       ]}
       expandableRows={{
         getItemChildren: (item: ArmyTableItem) => item.children ?? [],
-        isItemExpandable: (item: ArmyTableItem) => Boolean(item.children),
+        isItemExpandable: (item: ArmyTableItem) => item.children.length > 0,
         expandedItems: expandedItems,
         onExpandableItemToggle: ({ detail }) =>{
           onArmyTableItemExpand(detail)
         }
-          // setExpandedItems((prev: ArmyTableItem[]) => {
-          //   const next = new Set(
-          //     (prev ?? []).map((item: {id: string}) => item.id)
-          //   );
-          //   detail.expanded
-          //     ? next.add(detail.item.id)
-          //     : next.delete(detail.item.id);
-          //   return [...next].map(id => ({ id }));
-          // }),
       }}
       columnDisplay={[
         { id: "id", visible: false },
@@ -91,7 +67,7 @@ export default function Army() {
       enableKeyboardNavigation
       items={armyTableItems}
       loadingText="Loading resources"
-      selectionType="multi"
+      selectionType="single"
       trackBy="id"
       empty={
         <Box

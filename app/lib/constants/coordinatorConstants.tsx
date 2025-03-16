@@ -19,12 +19,6 @@ export const InitialPlayers: Player[] = [
     description: "",
     townIds: [],
   },
-  {
-    id: "3",
-    playerName: "Brotherhood of Kerala",
-    description: "",
-    townIds: [],
-  },
 ]
 
 export const InitialTowns: Town[] = [
@@ -71,15 +65,6 @@ export const InitialTowns: Town[] = [
     xPos: -923,
     yPos: 113,
     playerId: "2",
-    armyIds: [],
-  },
-  {
-    id: "9",
-    townName: "City of Temples",
-    description: "",
-    xPos: -321,
-    yPos: -847,
-    playerId: "3",
     armyIds: [],
   },
 ]

@@ -1,12 +1,11 @@
 import { atomWithStorage, RESET } from 'jotai/utils'
-import {InitialPlayers, InitialArmyContentTableItems, InitialTowns} from "@/app/lib/constants/coordinatorConstants";
+import {InitialPlayers, InitialTowns} from "@/app/lib/constants/coordinatorConstants";
 import {Army, ArmyTableItem, Player, Town} from "@/app/lib/objects/coordinatorObjects";
 import {useSetAtom} from "jotai/react";
 import { atom } from 'jotai';
 import {useAtom} from "jotai/index";
 import {TableProps} from "@cloudscape-design/components";
 import ExpandableItemToggleDetail = TableProps.ExpandableItemToggleDetail;
-// import {atom} from "jotai/vanilla/atom";
 
 export const armyTableItemsAtom = atomWithStorage<ArmyTableItem[]>(
   'armyContentTableItemsAtom',
@@ -14,15 +13,15 @@ export const armyTableItemsAtom = atomWithStorage<ArmyTableItem[]>(
 );
 
 export const idAtom = atomWithStorage('idAtom', 0);
-export const playerAtom = atomWithStorage('playerAtom', new Map());
-export const townAtom = atomWithStorage('townAtom', new Map());
-export const armyAtom = atomWithStorage('armyAtom', new Map());
+export const playerAtom = atomWithStorage('playerAtom', new Map<string, Player>());
+export const townAtom = atomWithStorage('townAtom', new Map<string, Town>());
+export const armyAtom = atomWithStorage('armyAtom', new Map<string, Army>());
 
 export const selectedArmyTableItemsAtom = atom<ArmyTableItem[]>([])
 export const expandedArmyTableItemsAtom = atom<ArmyTableItem[]>([])
 
 export function useArmyTableItems() {
-  const setArmyTableItems = useSetAtom(armyTableItemsAtom);
+  const [armyTableItems, setArmyTableItems] = useAtom(armyTableItemsAtom);
 
   const [players, setPlayers] = useAtom(playerAtom);
   const [towns, setTowns] = useAtom(townAtom);
@@ -31,54 +30,60 @@ export function useArmyTableItems() {
   const [selectedArmyTableItems, setSelectedArmyTableItems] = useAtom(selectedArmyTableItemsAtom);
   const [expandedArmyTableItems, setExpandedArmyTableItems] = useAtom(expandedArmyTableItemsAtom);
 
-  const addPlayer = (player: Player) => {
-    if (!players.has(player.id)) {
-      setPlayers((prev) => {
-        const newPlayersMap = new Map(prev);
-        newPlayersMap.set(player.id, player);
-        return newPlayersMap;
-      })
-      setArmyTableItems((prev: ArmyTableItem[]) => {
-        return [...prev, {
+  let tempArmyTableItems: ArmyTableItem[] = armyTableItems;
+  let tempPlayers: Map<string, Player> = players;
+  let tempTowns: Map<string, Town> = towns;
+  let tempArmies: Map<string, Army> = armies;
+
+  function addPlayerToTemp (player: Player): void {
+    if (!tempPlayers.has(player.id)) {
+      tempPlayers.set(player.id, player);
+      tempArmyTableItems = [
+        ...tempArmyTableItems,
+        {
           id: player.id,
           name: player.playerName,
           children: [],
-        }]
-      })
-    }
-  }
-
-  const addTown= (town: Town) => {
-    if (!towns.has(town.id)) {
-      setTowns((prev) => {
-        const newTownsMap = new Map(prev);
-        newTownsMap.set(town.id, town);
-        return newTownsMap;
-      });
-      setArmyTableItems((prev: ArmyTableItem[])=> {
-        const townArmyTableItem: ArmyTableItem = {
-          id: town.id,
-          name: town.townName,
-          description: town.description,
-          position: `(${town.xPos}, ${town.yPos})`,
-          children: [],
         }
+      ]
+    }
+  }
 
-        return prev.map((item: ArmyTableItem) => {
-          if (item.id === town.playerId) {
-            return {
-              ...item,
-              children: [...item.children, townArmyTableItem],
-            }
+  function addTownToTemp(town: Town): void {
+    if (!tempTowns.has(town.id)) {
+      tempTowns.set(town.id, town);
+      const townArmyTableItem: ArmyTableItem = {
+        id: town.id,
+        name: town.townName,
+        description: town.description,
+        position: `(${town.xPos}, ${town.yPos})`,
+        children: [],
+      };
+      tempArmyTableItems = tempArmyTableItems.map((item: ArmyTableItem) => {
+        if (item.id === town.playerId) {
+          return {
+            ...item,
+            children: [...item.children, townArmyTableItem],
           }
-          return item;
-        });
+        }
+        return item;
       });
     }
   }
 
-  const addArmy = (army: Army)=> {
+  const updateArmyTable = (newPlayers: Player[], newTowns: Town[], newArmies: Army[]): void => {
+    for (const player of newPlayers) {
+      addPlayerToTemp(player);
+    }
 
+    for (const town of newTowns) {
+      addTownToTemp(town);
+    }
+
+    setArmyTableItems(tempArmyTableItems);
+    setPlayers(tempPlayers);
+    setTowns(tempTowns);
+    setArmies(tempArmies);
   }
 
   const onArmyTableItemSelect = (items: ArmyTableItem[]) => {
@@ -98,23 +103,16 @@ export function useArmyTableItems() {
   }
 
   const resetArmyTableItems =  () => {
-    setArmyTableItems(RESET);
-    setPlayers(RESET);
-    setTowns(RESET);
+    tempArmyTableItems = [];
+    tempPlayers = new Map<string, Player>();
+    tempTowns = new Map<string, Town>();
+    tempArmies = new Map<string, Army>();
 
-    for (const player of InitialPlayers) {
-      addPlayer(player);
-    }
-
-    for (const town of InitialTowns) {
-      addTown(town);
-    }
+    updateArmyTable(InitialPlayers, InitialTowns, []);
   };
 
   return {
     resetArmyTableItems,
-    addPlayer,
-    addTown,
     onArmyTableItemSelect,
     onArmyTableItemExpand,
   };
