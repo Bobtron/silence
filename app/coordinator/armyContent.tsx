@@ -5,7 +5,6 @@ import Box from "@cloudscape-design/components/box";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Button from "@cloudscape-design/components/button";
 import Header from "@cloudscape-design/components/header";
-import {useState} from "react";
 import {
   armyTableItemsAtom,
   expandedArmyTableItemsAtom,
@@ -13,7 +12,8 @@ import {
   useArmyTableItems
 } from "@/app/lib/storage/armyTableAtoms";
 import {ArmyTableItem} from "@/app/lib/objects/coordinatorObjects";
-import {useAtom, useAtomValue} from "jotai/index";
+import { useAtomValue } from "jotai/index";
+import { ButtonDropdown } from "@cloudscape-design/components";
 
 export default function Army() {
 
@@ -22,9 +22,11 @@ export default function Army() {
   const selectedItems = useAtomValue(selectedArmyTableItemsAtom);
 
   const {
-    resetArmyTableItems,
+    onArmyTableExampleUse,
     onArmyTableItemSelect,
     onArmyTableItemExpand,
+    onArmyTableDeleteAll,
+    onArmyTableDeleteSelected,
   } = useArmyTableItems();
 
   return (
@@ -77,7 +79,10 @@ export default function Army() {
         >
           <SpaceBetween size="m">
             <b>No resources</b>
-            <Button>Create resource</Button>
+            <Button
+              variant="primary"
+              onClick={onArmyTableExampleUse}
+            >Use examples</Button>
           </SpaceBetween>
         </Box>
       }
@@ -92,32 +97,45 @@ export default function Army() {
               direction="horizontal"
               size="xs"
             >
-              <Button
-                onClick={resetArmyTableItems}>
-                Reset Table
-              </Button>
-              <Button variant="primary">
-                Create resource
-              </Button>
-              <Button
-                variant="normal"
-                onClick={
-                  () => {
-                    // const selectedItemsSet: Set<string> = new Set();
-                    // selectedItems.forEach((obj: {id: string}) => {
-                    //   selectedItemsSet.add(obj.id);
-                    // });
-                    //
-                    // const modifiedTableItems: ArmyTableItem[] = armyTableItems.filter((item: ArmyTableItem) => {
-                    //   return !selectedItemsSet.has(item.id);
-                    // });
-                    // setArmyTableItems(modifiedTableItems);
-                    // setSelectedItems([]);
+              <ButtonDropdown
+                items={[
+                  {
+                    text: "Add",
+                    items: [
+                      { text: "Add Player", id: "addPlayer" },
+                      { text: "Add Town", id: "addTown" },
+                      { text: "Add Army", id: "addArmy"},
+                    ]
+                  },
+                  {
+                    text: "Delete",
+                    items: [
+                      { text: "Delete selected", id: "deleteSelected" },
+                      { text: "Delete all", id: "deleteAll"}
+                    ]
+                  },
+                  { text: "Use examples", id: "example" }
+                ]}
+                onItemClick={({detail})=> {
+                  switch (detail.id) {
+                    case "example":
+                      onArmyTableExampleUse();
+                      break;
+                    case "deleteSelected":
+                      onArmyTableDeleteSelected();
+                      break;
+                    case "deleteAll":
+                      onArmyTableDeleteAll();
+                      break;
+                    default:
+                      alert(detail.id);
+                      break;
                   }
-                }
+                }}
+                variant="primary"
               >
-                Delete resource
-              </Button>
+                Edit
+              </ButtonDropdown>
             </SpaceBetween>
           }
         >

@@ -1,29 +1,33 @@
-import {ArmyTableItem, Player, Town} from "@/app/lib/objects/coordinatorObjects";
+import {ArmyTableItemType, Player, Town} from "@/app/lib/objects/coordinatorObjects";
 
-export const InitialPlayers: Player[] = [
+export const ExamplePlayers: Player[] = [
   {
     id: "0",
+    type: ArmyTableItemType.Player,
     playerName: "Council of Illyria",
     description: "",
     townIds: [],
   },
   {
     id: "1",
+    type: ArmyTableItemType.Player,
     playerName: "Clan Dollogh",
     description: "",
     townIds: [],
   },
   {
     id: "2",
+    type: ArmyTableItemType.Player,
     playerName: "Undying Flame",
     description: "",
     townIds: [],
   },
 ]
 
-export const InitialTowns: Town[] = [
+export const ExampleTowns: Town[] = [
   {
     id: "4",
+    type: ArmyTableItemType.Town,
     townName: "Centrum",
     description: "",
     xPos: 0,
@@ -33,6 +37,7 @@ export const InitialTowns: Town[] = [
   },
   {
     id: "5",
+    type: ArmyTableItemType.Town,
     townName: "Hastelbury",
     description: "",
     xPos: -152,
@@ -42,6 +47,7 @@ export const InitialTowns: Town[] = [
   },
   {
     id: "6",
+    type: ArmyTableItemType.Town,
     townName: "Trottingham",
     description: "",
     xPos: 113,
@@ -51,6 +57,7 @@ export const InitialTowns: Town[] = [
   },
   {
     id: "7",
+    type: ArmyTableItemType.Town,
     townName: "Lasthold",
     description: "",
     xPos: -651,
@@ -60,6 +67,7 @@ export const InitialTowns: Town[] = [
   },
   {
     id: "8",
+    type: ArmyTableItemType.Town,
     townName: "Verity City",
     description: "",
     xPos: -923,

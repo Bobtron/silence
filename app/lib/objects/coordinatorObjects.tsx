@@ -5,8 +5,15 @@ export enum Race {
   Orc = "Orc",
 }
 
+export enum ArmyTableItemType {
+  Player = "Player",
+  Town = "Town",
+  Army = "Army",
+}
+
 export interface Player {
   id: string;
+  type: ArmyTableItemType.Player;
   playerName: string;
   description: string;
   // race: Race;
@@ -16,6 +23,7 @@ export interface Player {
 
 export interface Town {
   id: string;
+  type: ArmyTableItemType.Town;
   townName: string;
   description: string;
   xPos: number;
@@ -26,6 +34,7 @@ export interface Town {
 
 export interface Army {
   id: string;
+  type: ArmyTableItemType.Army;
   armyName: string;
   description: string;
   speed: number;
@@ -34,6 +43,7 @@ export interface Army {
 
 export interface ArmyTableItem {
   id: string;
+  type: ArmyTableItemType;
   name: string;
   description?: string;
   position?: string;
