@@ -6,21 +6,21 @@ export const ExamplePlayers: Player[] = [
     type: ArmyTableItemType.Player,
     playerName: "Council of Illyria",
     description: "",
-    townIds: [],
+    townIds: ["4", "5", "6"],
   },
   {
     id: "1",
     type: ArmyTableItemType.Player,
     playerName: "Clan Dollogh",
     description: "",
-    townIds: [],
+    townIds: ["7"],
   },
   {
     id: "2",
     type: ArmyTableItemType.Player,
     playerName: "Undying Flame",
     description: "",
-    townIds: [],
+    townIds: ["8"],
   },
 ]
 

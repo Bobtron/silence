@@ -16,6 +16,8 @@ export const expandedArmyTableItemsAtom = atom<ArmyTableItem[]>([])
 
 export const armyTableItemsAtom = atom<ArmyTableItem[]>(
   (get): ArmyTableItem[] => {
+    console.log("LOADING TABLE ARMY ATOM")
+
     let armyTableItems: ArmyTableItem[] = Array.from(get(playerAtom)).map(([, player]: [string, Player]) => {
       return {
         id: player.id,
@@ -54,8 +56,6 @@ export const armyTableItemsAtom = atom<ArmyTableItem[]>(
 );
 
 export function useArmyTableItems() {
-  const [armyTableItems, setArmyTableItems] = useAtom(armyTableItemsAtom);
-
   const [players, setPlayers] = useAtom(playerAtom);
   const [towns, setTowns] = useAtom(townAtom);
   const [armies, setArmies] = useAtom(armyAtom);
@@ -63,9 +63,9 @@ export function useArmyTableItems() {
   const [selectedArmyTableItems, setSelectedArmyTableItems] = useAtom(selectedArmyTableItemsAtom);
   const [expandedArmyTableItems, setExpandedArmyTableItems] = useAtom(expandedArmyTableItemsAtom);
 
-  let tempPlayers: Map<string, Player> = players;
-  let tempTowns: Map<string, Town> = towns;
-  let tempArmies: Map<string, Army> = armies;
+  let tempPlayers: Map<string, Player>;
+  let tempTowns: Map<string, Town>;
+  let tempArmies: Map<string, Army>;
 
   function addPlayerToTemp (player: Player): void {
     if (!tempPlayers.has(player.id)) {
@@ -93,11 +93,18 @@ export function useArmyTableItems() {
   }
 
   function removePlayerFromTemp(player: Player) {
-
+    tempPlayers.delete(player.id);
   }
 
   function removeTownFromTemp(town: Town) {
+    const townOwner = tempPlayers.get(town.playerId)!;
+    const updatedTownOwner = {
+      ...townOwner,
+      townIds: townOwner.townIds.filter(townId => townId != town.id),
+    }
+    tempPlayers.set(town.playerId, updatedTownOwner);
 
+    tempTowns.delete(town.id);
   }
 
   function removeArmyFromTemp(army: Army) {
@@ -114,6 +121,8 @@ export function useArmyTableItems() {
     for (const army of removeArmies) {
       removeArmyFromTemp(army);
     }
+
+    tempTowns.forEach(town => console.log(town.id));
 
     setPlayers(tempPlayers);
     setTowns(tempTowns);
@@ -156,7 +165,12 @@ export function useArmyTableItems() {
   };
 
   const onArmyTableDeleteSelected = () => {
-    for (const item of selectedArmyTableItems) {
+    const tempSelectedArmyTableItems = selectedArmyTableItems;
+    tempPlayers = new Map<string, Player>(players);
+    tempTowns = new Map<string, Town>(towns);
+    tempArmies = new Map<string, Army>(armies);
+
+    for (const item of tempSelectedArmyTableItems) {
       if (item.children.length > 0) {
         // TODO: Set error message here
         alert("Delete the inside first")
@@ -164,21 +178,23 @@ export function useArmyTableItems() {
       }
     }
 
-    const playersToDelete: Player[] = selectedArmyTableItems
+    const playersToDelete: Player[] = tempSelectedArmyTableItems
       .filter(item => item.type === ArmyTableItemType.Player)
       .map(item => tempPlayers.get(item.id)!);
-    const townsToDelete: Town[] = selectedArmyTableItems
+    const townsToDelete: Town[] = tempSelectedArmyTableItems
       .filter(item => item.type === ArmyTableItemType.Town)
       .map(item => tempTowns.get(item.id)!);
-    const armiesToDelete: Army[] = selectedArmyTableItems
+    const armiesToDelete: Army[] = tempSelectedArmyTableItems
       .filter(item => item.type === ArmyTableItemType.Army)
       .map(item => tempArmies.get(item.id)!);
 
+    console.log(townsToDelete)
+    console.log(playersToDelete)
+
     deleteFromArmyTable(playersToDelete, townsToDelete, armiesToDelete);
-    setSelectedArmyTableItems([]);
     setExpandedArmyTableItems((prev: ArmyTableItem[]) => {
       return prev.filter((itemExpanded: ArmyTableItem) => {
-        selectedArmyTableItems.forEach(itemToDelete => {
+        tempSelectedArmyTableItems.forEach(itemToDelete => {
           if (itemExpanded.id === itemToDelete.id) {
             return false;
           }
@@ -186,6 +202,7 @@ export function useArmyTableItems() {
         return true;
       });
     });
+    setSelectedArmyTableItems([]);
   }
 
   return {
