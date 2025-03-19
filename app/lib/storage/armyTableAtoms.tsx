@@ -1,4 +1,4 @@
-import {atomWithStorage} from 'jotai/utils'
+import {atomWithStorage, createJSONStorage} from 'jotai/utils'
 import {ExamplePlayers, ExampleTowns} from "@/app/lib/constants/coordinatorConstants";
 import {Army, ArmyTableItem, ArmyTableItemType, Player, Town} from "@/app/lib/objects/coordinatorObjects";
 import {atom} from 'jotai';
@@ -6,10 +6,44 @@ import {useAtom} from "jotai/index";
 import {TableProps} from "@cloudscape-design/components";
 import ExpandableItemToggleDetail = TableProps.ExpandableItemToggleDetail;
 
-export const idAtom = atomWithStorage('idAtom', 0);
-export const playerAtom = atomWithStorage('playerAtom', new Map<string, Player>());
-export const townAtom = atomWithStorage('townAtom', new Map<string, Town>());
-export const armyAtom = atomWithStorage('armyAtom', new Map<string, Army>());
+interface MapStorage {
+  dataType: string;
+  value: Array<[any, any]>;
+}
+
+// Refer to
+// https://stackoverflow.com/questions/29085197/how-do-you-json-stringify-an-es6-map
+// https://jotai.org/docs/utilities/storage
+// https://github.com/pmndrs/jotai/blob/main/src/vanilla/utils/atomWithStorage.ts
+
+// If we use the default JSON storage it can't serialize or deserialize Map objects properly
+// Note that if any object has a key called 'dataType' and a value called 'Map', it will be
+// incorrectly deserialized into a Map object
+const jsonStorage = createJSONStorage<any>(() => localStorage, {
+  replacer: (key, value: any) => {
+    if(value instanceof Map) {
+      return {
+        dataType: 'Map',
+        value: Array.from(value.entries()), // or with spread: value: [...value]
+      };
+    } else {
+      return value;
+    }
+  },
+  reviver: (key, value: MapStorage | any) => {
+    if(typeof value === 'object' && value !== null) {
+      if (value.dataType === 'Map') {
+        return new Map(value.value);
+      }
+    }
+    return value;
+  },
+})
+
+export const idAtom = atomWithStorage<number>('idAtom', 0, jsonStorage);
+export const playerAtom = atomWithStorage<Map<string, Player>>('playerAtom', new Map<string, Player>(), jsonStorage);
+export const townAtom = atomWithStorage<Map<string, Town>>('townAtom', new Map<string, Town>(), jsonStorage);
+export const armyAtom = atomWithStorage<Map<string, Army>>('armyAtom', new Map<string, Army>(), jsonStorage);
 
 export const selectedArmyTableItemsAtom = atom<ArmyTableItem[]>([])
 export const expandedArmyTableItemsAtom = atom<ArmyTableItem[]>([])
