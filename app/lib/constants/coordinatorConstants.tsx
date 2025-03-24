@@ -1,4 +1,4 @@
-import {ArmyTableItemType, Player, Town} from "@/app/lib/objects/coordinatorObjects";
+import {ArmyTableItemType, Player, Town} from "@/app/lib/objects/armyObjects";
 
 export const ExamplePlayers: Player[] = [
   {

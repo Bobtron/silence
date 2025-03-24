@@ -11,6 +11,26 @@ export enum ArmyTableItemType {
   Army = "Army",
 }
 
+export interface InputPlayer {
+  playerName: string;
+  description: string;
+}
+
+export interface InputTown {
+  townName: string;
+  description: string;
+  xPos: number;
+  yPos: number;
+  playerId: string;
+}
+
+export interface InputArmy {
+  armyName: string;
+  description: string;
+  speed: number;
+  townId: string;
+}
+
 export interface Player {
   id: string;
   type: ArmyTableItemType.Player;

@@ -1,6 +1,14 @@
 import {atomWithStorage, createJSONStorage} from 'jotai/utils'
 import {ExamplePlayers, ExampleTowns} from "@/app/lib/constants/coordinatorConstants";
-import {Army, ArmyTableItem, ArmyTableItemType, Player, Town} from "@/app/lib/objects/coordinatorObjects";
+import {
+  Army,
+  ArmyTableItem,
+  ArmyTableItemType, InputArmy,
+  InputPlayer,
+  InputTown,
+  Player,
+  Town
+} from "@/app/lib/objects/armyObjects";
 import {atom} from 'jotai';
 import {useAtom} from "jotai/index";
 import {TableProps} from "@cloudscape-design/components";
@@ -40,7 +48,10 @@ const jsonStorage = createJSONStorage<any>(() => localStorage, {
   },
 })
 
-export const idAtom = atomWithStorage<number>('idAtom', 0, jsonStorage);
+export const addPlayerModalVisibleAtom = atom(false);
+export const addTownModalVisibleAtom = atom(false);
+export const addArmyModalVisibleAtom = atom(false);
+
 export const playerAtom = atomWithStorage<Map<string, Player>>('playerAtom', new Map<string, Player>(), jsonStorage);
 export const townAtom = atomWithStorage<Map<string, Town>>('townAtom', new Map<string, Town>(), jsonStorage);
 export const armyAtom = atomWithStorage<Map<string, Army>>('armyAtom', new Map<string, Army>(), jsonStorage);
@@ -97,9 +108,9 @@ export function useArmyTableItems() {
   const [selectedArmyTableItems, setSelectedArmyTableItems] = useAtom(selectedArmyTableItemsAtom);
   const [expandedArmyTableItems, setExpandedArmyTableItems] = useAtom(expandedArmyTableItemsAtom);
 
-  let tempPlayers: Map<string, Player>;
-  let tempTowns: Map<string, Town>;
-  let tempArmies: Map<string, Army>;
+  let tempPlayers: Map<string, Player> = new Map<string, Player>(players);
+  let tempTowns: Map<string, Town> = new Map<string, Town>(towns);
+  let tempArmies: Map<string, Army> = new Map<string, Army>(armies);
 
   function addPlayerToTemp (player: Player): void {
     if (!tempPlayers.has(player.id)) {
@@ -145,7 +156,9 @@ export function useArmyTableItems() {
     throw new Error('Function not implemented.');
   }
 
-  const deleteFromArmyTable = (removePlayers: Player[], removeTowns: Town[], removeArmies: Army[]): void => {
+  const deleteFromArmyTable = (
+    removePlayers: Player[], removeTowns: Town[], removeArmies: Army[]
+  ): void => {
     for (const player of removePlayers) {
       removePlayerFromTemp(player);
     }
@@ -155,8 +168,6 @@ export function useArmyTableItems() {
     for (const army of removeArmies) {
       removeArmyFromTemp(army);
     }
-
-    tempTowns.forEach(town => console.log(town.id));
 
     setPlayers(tempPlayers);
     setTowns(tempTowns);
@@ -179,11 +190,13 @@ export function useArmyTableItems() {
     });
   }
 
-  const onArmyTableExampleUse =  () => {
-    tempPlayers = new Map<string, Player>();
-    tempTowns = new Map<string, Town>();
-    tempArmies = new Map<string, Army>();
+  const onArmyTableAddInput = (
+    newInputPlayers: InputPlayer[], newInputTowns: InputTown[], newInputArmies: InputArmy[]
+  ): void => {
 
+  }
+
+  const onArmyTableExampleUse =  () => {
     updateArmyTable(ExamplePlayers, ExampleTowns, []);
 
     setSelectedArmyTableItems([])
@@ -222,9 +235,6 @@ export function useArmyTableItems() {
       .filter(item => item.type === ArmyTableItemType.Army)
       .map(item => tempArmies.get(item.id)!);
 
-    console.log(townsToDelete)
-    console.log(playersToDelete)
-
     deleteFromArmyTable(playersToDelete, townsToDelete, armiesToDelete);
     setExpandedArmyTableItems((prev: ArmyTableItem[]) => {
       return prev.filter((itemExpanded: ArmyTableItem) => {
@@ -240,6 +250,7 @@ export function useArmyTableItems() {
   }
 
   return {
+    onArmyTableAddInput,
     onArmyTableExampleUse,
     onArmyTableItemSelect,
     onArmyTableItemExpand,
