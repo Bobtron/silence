@@ -65,8 +65,10 @@ export interface ArmyTableItem {
   id: string;
   type: ArmyTableItemType;
   name: string;
+  nameUrl?: string;
   description?: string;
   position?: string;
+  mapUrl?: string;
   speed?: number;
   children: ArmyTableItem[];
 }

@@ -3,7 +3,8 @@ import {ExamplePlayers, ExampleTowns} from "@/app/lib/constants/coordinatorConst
 import {
   Army,
   ArmyTableItem,
-  ArmyTableItemType, InputArmy,
+  ArmyTableItemType,
+  InputArmy,
   InputPlayer,
   InputTown,
   Player,
@@ -63,20 +64,18 @@ export const armyTableItemsAtom = atom<ArmyTableItem[]>(
   (get): ArmyTableItem[] => {
     console.log("LOADING TABLE ARMY ATOM")
 
-    let armyTableItems: ArmyTableItem[] = Array.from(get(playerAtom)).map(([, player]: [string, Player]) => {
+    let tempPlayers: Map<string, Player> = new Map<string, Player>(get(playerAtom));
+    let tempTowns: Map<string, Town> = new Map<string, Town>(get(townAtom));
+    let tempArmies: Map<string, Army> = new Map<string, Army>(get(armyAtom));
+
+    let armyTableItems: ArmyTableItem[] = Array.from(tempPlayers).map(([, player]: [string, Player]) => {
       return {
         id: player.id,
         type: ArmyTableItemType.Player,
         name: player.playerName,
-        children: [],
-      };
-    });
+        children: player.townIds.map(townId => {
+          const town = tempTowns.get(townId)!;
 
-    // TODO: This is O(n^2), simplify to O(n). Ideally create a map of these ids, which only at the end get converted
-    // into an array for the armyTableItems.
-    Array.from(get(townAtom)).forEach(([, town]: [string, Town]) => {
-      armyTableItems = armyTableItems.map((item: ArmyTableItem) => {
-        if (item.id === town.playerId) {
           const townArmyTableItem: ArmyTableItem = {
             id: town.id,
             type: ArmyTableItemType.Town,
@@ -85,13 +84,10 @@ export const armyTableItemsAtom = atom<ArmyTableItem[]>(
             position: `(${town.xPos}, ${town.yPos})`,
             children: [],
           };
-          return {
-            ...item,
-            children: [...item.children, townArmyTableItem],
-          };
-        }
-        return item;
-      });
+
+          return townArmyTableItem;
+        }),
+      };
     });
 
     // TODO: add armies
@@ -121,6 +117,7 @@ export function useArmyTableItems() {
   function addTownToTemp(town: Town): void {
     if (!tempTowns.has(town.id)) {
       tempTowns.set(town.id, town);
+      tempPlayers.get(town.playerId)!.townIds.push(town.id);
     }
   }
 
@@ -193,10 +190,37 @@ export function useArmyTableItems() {
   const onArmyTableAddInput = (
     newInputPlayers: InputPlayer[], newInputTowns: InputTown[], newInputArmies: InputArmy[]
   ): void => {
+    const playersToAdd: Player[] = [];
+    const townsToAdd: Town[] = [];
 
+    for (const newInputPlayer of newInputPlayers) {
+      const player: Player = {
+        ...newInputPlayer,
+        id: self.crypto.randomUUID().substring(0, 8),
+        townIds: [],
+        type: ArmyTableItemType.Player,
+      };
+      playersToAdd.push(player);
+    }
+
+    for (const newInputTown of newInputTowns) {
+      const town: Town = {
+        ...newInputTown,
+        id: self.crypto.randomUUID().substring(0, 8),
+        armyIds: [],
+        type: ArmyTableItemType.Town,
+      };
+      townsToAdd.push(town);
+    }
+
+    updateArmyTable(playersToAdd, townsToAdd, []);
   }
 
   const onArmyTableExampleUse =  () => {
+    tempPlayers = new Map<string, Player>();
+    tempTowns = new Map<string, Town>();
+    tempArmies = new Map<string, Army>();
+
     updateArmyTable(ExamplePlayers, ExampleTowns, []);
 
     setSelectedArmyTableItems([])

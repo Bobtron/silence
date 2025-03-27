@@ -6,7 +6,7 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import Button from "@cloudscape-design/components/button";
 import Header from "@cloudscape-design/components/header";
 import {
-  addPlayerModalVisibleAtom,
+  addPlayerModalVisibleAtom, addTownModalVisibleAtom,
   armyTableItemsAtom,
   expandedArmyTableItemsAtom,
   selectedArmyTableItemsAtom,
@@ -15,7 +15,7 @@ import {
 import {ArmyTableItem} from "@/app/lib/objects/armyObjects";
 import {useAtom, useAtomValue, useSetAtom} from "jotai/index";
 import { ButtonDropdown } from "@cloudscape-design/components";
-import { AddPlayerModal } from "./armyModal";
+import { AddPlayerModal, AddTownModal } from "./armyModal";
 
 export default function Army() {
 
@@ -23,7 +23,8 @@ export default function Army() {
   const expandedItems = useAtomValue(expandedArmyTableItemsAtom);
   const selectedItems = useAtomValue(selectedArmyTableItemsAtom);
 
-  const setPlayerModalVisible = useSetAtom(addPlayerModalVisibleAtom);
+  const setAddPlayerModalVisible = useSetAtom(addPlayerModalVisibleAtom);
+  const setAddTownModalVisible = useSetAtom(addTownModalVisibleAtom);
 
   const {
     onArmyTableExampleUse,
@@ -35,7 +36,8 @@ export default function Army() {
 
   return (
     <>
-      <AddPlayerModal/>
+      <AddPlayerModal />
+      <AddTownModal />
       <Table
         onSelectionChange={({ detail }) =>
           onArmyTableItemSelect(detail.selectedItems)
@@ -54,9 +56,19 @@ export default function Army() {
             cell: (item: ArmyTableItem) => item.name,
           },
           {
+            id: "description",
+            header: "Description",
+            cell: (item: ArmyTableItem) => item.description,
+          },
+          {
             id: "position",
             header: "Position",
             cell: (item: ArmyTableItem) => item.position,
+          },
+          {
+            id: "speed",
+            header: "Speed",
+            cell: (item: ArmyTableItem) => item.speed,
           },
         ]}
         expandableRows={{
@@ -70,7 +82,9 @@ export default function Army() {
         columnDisplay={[
           { id: "id", visible: false },
           { id: "name", visible: true },
+          { id: "description", visible: true},
           { id: "position", visible: true },
+          { id: "speed", visible: true },
         ]}
         enableKeyboardNavigation
         items={armyTableItems}
@@ -125,9 +139,12 @@ export default function Army() {
                   onItemClick={({detail})=> {
                     switch (detail.id) {
                       case "addPlayer":
-                        setPlayerModalVisible(true);
+                        setAddPlayerModalVisible(true);
                         // let uuid = self.crypto.randomUUID();
                         // alert(uuid);
+                        break;
+                      case "addTown":
+                        setAddTownModalVisible(true);
                         break;
                       case "example":
                         onArmyTableExampleUse();
