@@ -3,21 +3,21 @@
 	"scripts": {
 		"dev": "next dev --turbo",
 		"build": "next build",
-		"clean": "rm -r out .next"
+		"clean": "rm -rf out .next"
 	},
 	"dependencies": {
-		"@cloudscape-design/collection-hooks": "^1.0.66",
-		"@cloudscape-design/components": "^3.0.924",
-		"@cloudscape-design/global-styles": "^1.0.38",
-		"jotai": "^2.12.2",
-		"next": "^15.2.2",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"@cloudscape-design/collection-hooks": "latest",
+		"@cloudscape-design/components": "latest",
+		"@cloudscape-design/global-styles": "latest",
+		"jotai": "latest",
+		"next": "latest",
+		"react": "<19.0.0",
+		"react-dom": "<19.0.0"
 	},
 	"devDependencies": {
-		"@types/node": "^22.13.8",
-		"@types/react": "^18.3.18",
-		"@types/react-dom": "^18.3.5",
-		"typescript": "^5.8.2"
+		"@types/node": "latest",
+		"@types/react": "<19.0.0",
+		"@types/react-dom": "<19.0.0",
+		"typescript": "latest"
 	}
 }
