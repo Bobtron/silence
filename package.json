@@ -9,6 +9,8 @@
 		"@cloudscape-design/collection-hooks": "latest",
 		"@cloudscape-design/components": "latest",
 		"@cloudscape-design/global-styles": "latest",
+		"fast-xml-parser": "latest",
+		"idb": "latest",
 		"jotai": "latest",
 		"next": "latest",
 		"react": "<19.0.0",

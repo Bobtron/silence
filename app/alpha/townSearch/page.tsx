@@ -10,17 +10,15 @@ import {
 } from '@cloudscape-design/components';
 import {I18nProvider} from '@cloudscape-design/components/i18n';
 import messages from '@cloudscape-design/components/i18n/messages/all.en';
-import Target from '../../coordinator/targetContent';
-import Arrival from '../../coordinator/arrivalContent';
-import Army from '../../coordinator/armyContent';
 import ChangeDetail = AppLayoutProps.ChangeDetail;
+import TownSearch from "@/app/townSearch/townSearchContent";
 
 const LOCALE = 'en';
 
 export default function AppLayoutPreview() {
 
   const [activeHref, setActiveHref] = useState(
-    "#/army"
+    ""
   );
 
   const [toolsOpen, setToolsOpen] = useState(
@@ -57,27 +55,26 @@ export default function AppLayoutPreview() {
               text: 'Service name',
             }}
             items={[
-              {type: "link", text: "Armies", href: "#/army"},
-              {type: "link", text: "Targets", href: "#/target"},
-              {type: "link", text: "Arrival Times", href: "#/arrival"},
             ]}
           />
         }
         notifications={
           <Flashbar
-            items={[
-              {
-                type: 'info',
-                dismissible: true,
-                content: 'This is an info flash message.',
-                id: 'message_1',
-                // onDismiss:{
-                //   (event: CustomEvent<ClickDetail>) => {
-                //     console.log(event);
-                //   }
-                // }
-              },
-            ]}
+            items={
+              [
+                // {
+                //   type: 'info',
+                //   dismissible: true,
+                //   content: 'This is an info flash message.',
+                //   id: 'message_1',
+                //   // onDismiss:{
+                //   //   (event: CustomEvent<ClickDetail>) => {
+                //   //     console.log(event);
+                //   //   }
+                //   // }
+                // },
+              ]
+            }
           />
         }
         toolsOpen={toolsOpen}
@@ -91,26 +88,23 @@ export default function AppLayoutPreview() {
           <ContentLayout
             header={
               <Header variant="h1" info={<Link variant="info">Info</Link>}>
-                Page header
+                Reactionary Finder (Town Search)
               </Header>
             }
           >
-            <Container
-              header={
-                <Header variant="h2" description="Container description">
-                  Container header
-                </Header>
-              }
-            >
+            {/*<Container*/}
+            {/*  header={*/}
+            {/*    <Header variant="h2" description="Container description">*/}
+            {/*      Container header*/}
+            {/*    </Header>*/}
+            {/*  }*/}
+            {/*>*/}
               <div className="contentPlaceholder">
-                {activeHref === '#/army' && <Army/>}
-                {activeHref === '#/target' && <Target/>}
-                {activeHref === '#/arrival' && <Arrival/>}
+                <TownSearch/>
               </div>
-            </Container>
+            {/*</Container>*/}
           </ContentLayout>
         }
-        splitPanel={<SplitPanel header="Split panel header">Split panel content</SplitPanel>}
       />
     </I18nProvider>
   );

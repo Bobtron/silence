@@ -3,8 +3,8 @@ import "@cloudscape-design/global-styles/index.css"
 import { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: 'U of Silence',
-  description: 'The Knowledge and Wisdom Exchange.',
+  title: 'Illy Revolution!',
+  description: 'All revolutions are impossible until they become inevitable.',
 };
 
 export default function RootLayout({
