@@ -1,6 +1,6 @@
 'use client';
 
-import {Town, Player, Alliance} from "@/app/lib/objects/townSearchObjects";
+import {Town, Player, Alliance, PlayerType} from "@/app/lib/objects/townSearchObjects";
 import {X2jOptions, XMLParser} from "fast-xml-parser";
 import {
   clearAllTowns,
@@ -45,6 +45,9 @@ onmessage = async (e: MessageEvent<File>): Promise<void> => {
         playerId: townStruct['player']['playername']['@_id'],
         playerName: townStruct['player']['playername']['#text'],
         playerRace: townStruct['player']['playerrace'],
+        playerType: PlayerType.Normal,
+        numTowns: 0,
+        numPopulation: 0,
       }
 
       if (townStruct['player']['playeralliance']) {
@@ -52,6 +55,9 @@ onmessage = async (e: MessageEvent<File>): Promise<void> => {
           allianceId: townStruct['player']['playeralliance']['alliancename']['@_id'],
           allianceName: townStruct['player']['playeralliance']['alliancename']['#text'],
           allianceTicker: townStruct['player']['playeralliance']['allianceticker'],
+          numTowns: 0,
+          numPopulation: 0,
+          numPlayers: 0,
         }
         playerObj.allianceId = allianceObj.allianceId;
 
@@ -66,6 +72,23 @@ onmessage = async (e: MessageEvent<File>): Promise<void> => {
       }
     }
 
+    for (const townObj of townsObjArr) {
+      const playerObj: Player = playersObjMap.get(townObj.playerId)!;
+      playerObj.numTowns++;
+      playerObj.numPopulation += townObj.population;
+      playersObjMap.set(playerObj.playerId, playerObj);
+    }
+
+    for (const playerObj of playersObjMap.values()) {
+      if (playerObj.allianceId) {
+        const allianceObj: Alliance = alliancesObjMap.get(playerObj.allianceId)!;
+        allianceObj.numTowns += playerObj.numTowns;
+        allianceObj.numPopulation += playerObj.numPopulation;
+        allianceObj.numPlayers++;
+        alliancesObjMap.set(allianceObj.allianceId, allianceObj);
+      }
+    }
+
     await Promise.all([
       loadTownsFromArray(townsObjArr),
       loadPlayersFromMap(playersObjMap),
@@ -75,7 +98,7 @@ onmessage = async (e: MessageEvent<File>): Promise<void> => {
     await setDataLoadDate(dataGenerationDateTime);
     console.log("Done loading into IndexedDB");
 
-    postMessage(await getAllTownSearchRows());
+    postMessage(null /*await getAllTownSearchRows()*/);
 
   } catch (error: any) {
     console.error(error);

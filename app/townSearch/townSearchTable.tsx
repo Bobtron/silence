@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useCollection } from '@cloudscape-design/collection-hooks';
+import React, {useEffect, useState} from 'react';
+import {PropertyFilterProperty, useCollection} from '@cloudscape-design/collection-hooks';
 import {
   Box,
   Button,
@@ -17,32 +17,32 @@ import {
   Table,
 } from '@cloudscape-design/components';
 import {
-  columnDefinitions,
-  CONTENT_DISPLAY_OPTIONS, DEFAULT_FILTERING_OPTIONS,
-  DEFAULT_FILTERING_PROPERTIES,
-  DEFAULT_PREFERENCES
+  townSearchColumnDefinitions,
+  CONTENT_DISPLAY_OPTIONS,
+  DEFAULT_PREFERENCES, EMPTY_FILTER_QUERY, GET_FILTERING_PROPERTIES, FILTERING_OPTIONS
 } from '../lib/config/townSearchConfig';
 import {useAtom} from "jotai/index";
-import {townSearchRowsAtom} from "@/app/lib/storage/townSearchAtoms";
-import {TownSearchRow} from "@/app/lib/objects/townSearchObjects";
-import {getAllTownSearchRows} from "@/app/lib/storage/illyriadObjectsDAO";
+import {alliancesRankingsAtom, townSearchRowsAtom} from "@/app/lib/storage/townSearchAtoms";
+import {RankedAllianceMetricsById, TownSearchRow} from "@/app/lib/objects/townSearchObjects";
+import {getAllAlliancesRankings, getAllTownSearchRows, getDataLoadDate} from "@/app/lib/storage/illyriadObjectsDAO";
 
-function EmptyState({ title, subtitle, action }) {
+function EmptyState(props: any) {
   return (
     <Box textAlign="center" color="inherit">
       <Box variant="strong" textAlign="center" color="inherit">
-        {title}
+        {props.title}
       </Box>
       <Box variant="p" padding={{ bottom: 's' }} color="inherit">
-        {subtitle}
+        {props.subtitle}
       </Box>
-      {action}
+      {props.action}
     </Box>
   );
 }
 
 export default function TownSearchTable() {
   const [townSearchRows, setTownSearchRows] = useAtom(townSearchRowsAtom);
+  const [alliancesRankings, setAlliancesRankings] = useAtom(alliancesRankingsAtom);
 
   const [preferences, setPreferences] = useState(DEFAULT_PREFERENCES);
   const [xPosStr, setXPos] = useState("");
@@ -54,19 +54,15 @@ export default function TownSearchTable() {
     townSearchRows,
     {
       propertyFiltering: {
-        filteringProperties: DEFAULT_FILTERING_PROPERTIES,
-        empty: <EmptyState title="No towns" action={<Button>Create instance</Button>} />,
+        filteringProperties: GET_FILTERING_PROPERTIES(alliancesRankings),
+        empty: <EmptyState title="No towns"/>,
         noMatch: <EmptyState
           title="No matches"
           action={
             <Button
               onClick={
                 () => {
-                  actions.setPropertyFiltering({
-                    operation: 'and',
-                    tokenGroups: [],
-                    tokens: [],
-                  })
+                  actions.setPropertyFiltering(EMPTY_FILTER_QUERY)
                 }
               }
             >
@@ -76,12 +72,19 @@ export default function TownSearchTable() {
         />,
       },
       pagination: { pageSize: preferences.pageSize },
-      sorting: {},
+      sorting: {
+        defaultState: {
+          sortingColumn: {
+            sortingField: 'distance',
+          },
+          isDescending: false,
+        }
+      },
       selection: {},
     }
   );
 
-  const onTownSearch = async () => {
+  const onTownSearch = () => {
     setIsTableLoading(true);
     getAllTownSearchRows().then((allTowns: TownSearchRow[]) => {
       const xPos = parseInt(xPosStr);
@@ -106,15 +109,26 @@ export default function TownSearchTable() {
     });
   }
 
+  useEffect(() => {
+    // setSearchFilteringProperties(DEFAULT_FILTERING_PROPERTIES);
+    getAllAlliancesRankings().then((alliancesRankings: RankedAllianceMetricsById) => {
+      setAlliancesRankings(alliancesRankings);
+    })
+  }, [])
+
   return (
     <>
       <Table
         {...collectionProps}
-
+        items={items}
+        columnDefinitions={townSearchColumnDefinitions}
+        columnDisplay={preferences.contentDisplay}
+        stripedRows={preferences.stripedRows}
+        contentDensity={preferences.contentDensity}
         header={
           <SpaceBetween direction="vertical" size="xs">
             <Header
-              counter={`(${townSearchRows.length})`}
+              counter={filteredItemsCount ? `(${filteredItemsCount}/${townSearchRows.length})` : `(${townSearchRows.length})`}
               variant="h1"
             >
               Towns
@@ -158,9 +172,6 @@ export default function TownSearchTable() {
             </SpaceBetween>
           </SpaceBetween>
         }
-        columnDefinitions={columnDefinitions}
-        columnDisplay={preferences.contentDisplay}
-        items={items}
         pagination={<Pagination {...paginationProps} />}
         filter={
           <PropertyFilter
@@ -168,7 +179,7 @@ export default function TownSearchTable() {
             expandToViewport={true}
             enableTokenGroups={true}
             filteringPlaceholder="Filter Towns in Range"
-            filteringOptions={DEFAULT_FILTERING_OPTIONS}
+            filteringOptions={FILTERING_OPTIONS}
             onChange={(event) => {
                 console.log(event);
                 propertyFilterProps.onChange(event);

@@ -1,5 +1,5 @@
 import {atomWithStorage, createJSONStorage} from 'jotai/utils'
-import {ExamplePlayers, ExampleTowns} from "@/app/lib/constants/coordinatorConstants";
+import {ExamplePlayers, ExampleTowns} from "@/app/lib/config/coordinatorConfig";
 import {
   Army,
   ArmyTableItem,

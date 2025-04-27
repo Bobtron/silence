@@ -1,22 +1,45 @@
+export enum PlayerType {
+  Normal = "",
+  Abandoned = "Abandoned",
+  Banned = "Banned",
+}
+
+export interface RankedAllianceMetricsById {
+  [key: string]: string[]; // Index signature
+  byMemberCount: string[];
+  byTownCount: string[];
+  byPopulationCount: string[];
+}
+
 export interface TownSearchRow {
-  townName: string;
+  townId: string;
+  playerId: string;
+  allianceId?: string;
+
   playerName: string;
-  distance?: number;
-  population: number;
+  playerType: PlayerType;
+  playerRace: string;
+
   allianceName?: string;
   allianceTicker?: string;
-  terrainCombatType: string;
+
+  townName: string;
   mapX: number;
   mapY: number;
-  playerRace: string;
+  terrainCombatType: string;
+  population: number;
   isCapitalCity: boolean;
   isAllianceCapitalCity: boolean;
+  distance?: number;
 }
 
 export interface Player {
   playerId: string;
   playerName: string;
+  playerType: PlayerType;
   playerRace: string;
+  numTowns: number;
+  numPopulation: number;
   allianceId?: string;
 }
 
@@ -24,6 +47,9 @@ export interface Alliance {
   allianceId: string;
   allianceName: string;
   allianceTicker: string;
+  numTowns: number;
+  numPopulation: number;
+  numPlayers: number;
 }
 
 export interface Town {

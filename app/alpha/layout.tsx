@@ -27,82 +27,33 @@ export default function RootLayout({
 
   return (
     <>
-      <div id="h" style={{ position: 'sticky', top: 0, zIndex: 1002 }}>
+      <div id="h" style={{position: 'sticky', top: 0, zIndex: 1002}}>
         <TopNavigation
           identity={{
             href: "#",
-            title: "Service",
+            title: "Illy Revolution!",
           }}
           utilities={[
             {
               type: "button",
-              text: "Link",
-              href: "https://illyriad.com/?398697",
+              variant: 'link',
+              text: "Play Illyriad",
+              href: "https://elgea.illyriad.co.uk/Account/LogOn",
               external: true,
-              externalIconAriaLabel: " (opens in a new tab)"
             },
             {
               type: "button",
-              iconName: "notification",
-              title: "Notifications",
-              ariaLabel: "Notifications (unread)",
-              badge: true,
-              disableUtilityCollapse: false
-            },
-            {
-              type: "menu-dropdown",
-              iconName: "settings",
-              ariaLabel: "Settings",
-              title: "Settings",
-              items: [
-                {
-                  id: "settings-org",
-                  text: "Organizational settings"
-                },
-                {
-                  id: "settings-project",
-                  text: "Project settings"
-                }
-              ]
-            },
-            {
-              type: "menu-dropdown",
-              text: "Customer Name",
-              description: "email@example.com",
-              iconName: "user-profile",
-              items: [
-                { id: "profile", text: "Profile" },
-                { id: "preferences", text: "Preferences" },
-                { id: "security", text: "Security" },
-                {
-                  id: "support-group",
-                  text: "Support",
-                  items: [
-                    {
-                      id: "documentation",
-                      text: "Documentation",
-                      href: "#",
-                      external: true,
-                      externalIconAriaLabel:
-                        " (opens in new tab)"
-                    },
-                    { id: "support", text: "Support" },
-                    {
-                      id: "feedback",
-                      text: "Feedback",
-                      href: "#",
-                      external: true,
-                      externalIconAriaLabel:
-                        " (opens in new tab)"
-                    }
-                  ]
-                },
-                { id: "signout", text: "Sign out" }
-              ]
+              variant: 'primary-button',
+              text: 'Buy me a beer!',
+              href: 'https://www.buymeacoffee.com/jusly',
+              iconUrl: 'https://assets.illyriad.net/img/icons/beer_48.png',
+              external: true,
+              target: '_blank',
             }
           ]}
         />
       </div>
+
       {children}
     </>
   );

@@ -12,9 +12,8 @@ import Form from "@cloudscape-design/components/form";
 import Link from "@cloudscape-design/components/link";
 import ExpandableSection from "@cloudscape-design/components/expandable-section";
 import {useAtom} from "jotai/index";
-import {dateLastLoadedAtom, townSearchRowsAtom} from "../lib/storage/townSearchAtoms";
+import {dateLastLoadedAtom} from "../lib/storage/townSearchAtoms";
 import {getDataLoadDate} from "@/app/lib/storage/illyriadObjectsDAO";
-import {TownSearchRow} from "@/app/lib/objects/townSearchObjects";
 
 export function TownDataLoader() {
   const [fetchingData, setFetchingData] = useState(false);
@@ -22,28 +21,26 @@ export function TownDataLoader() {
   const [loadDataExpanded, setLoadDataExpanded] = useState(true);
 
   const [dateLastLoaded, setDateLastLoaded] = useAtom(dateLastLoadedAtom);
-  const [townSearchRows, setTownSearchRows] = useAtom(townSearchRowsAtom);
 
   const analyzeDataFiles = () => {
-    const townDataWorker = new Worker(new URL("../lib/workers/fetchIllyriadTownDataWorker.ts", import.meta.url));
+    const townDataWorker = new Worker(new URL("../lib/workers/fetchIllyriadDataWorker.ts", import.meta.url));
+
+    townDataWorker.onmessage = (e: MessageEvent<null>) => {
+      getDataLoadDate().then((date: Date | undefined) => {
+        setDateLastLoaded(date);
+      });
+      setLoadDataExpanded(false);
+      setFetchingData(false);
+    };
 
     if (townsXMLFileList.length > 0) {
       setFetchingData(true);
       townDataWorker.postMessage(townsXMLFileList[0]);
     }
-
-    townDataWorker.onmessage = (e: MessageEvent<TownSearchRow[]>) => {
-      getDataLoadDate().then((date: Date | null) => {
-        setDateLastLoaded(date);
-      });
-      setLoadDataExpanded(false);
-      setFetchingData(false);
-      setTownSearchRows(e.data)
-    };
   }
 
   useEffect(() => {
-    getDataLoadDate().then((date: Date | null) => {
+    getDataLoadDate().then((date: Date | undefined) => {
       setDateLastLoaded(date);
     });
   }, [])

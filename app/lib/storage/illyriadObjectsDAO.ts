@@ -1,9 +1,16 @@
 'use client';
 
 import {IDBPTransaction, openDB} from 'idb';
-import {Alliance, Player, Town, TownSearchRow} from "@/app/lib/objects/townSearchObjects";
+import {
+  RankedAllianceMetricsById,
+  Alliance,
+  Player,
+  PlayerType,
+  Town,
+  TownSearchRow
+} from "@/app/lib/objects/townSearchObjects";
 
-const dbPromise = () => openDB('illyriad-objects-store', 3, {
+const dbPromise = () => openDB('illyriad-objects-store', 5, {
     upgrade(db) {
       db.deleteObjectStore('illyriad-towns');
       db.deleteObjectStore('illyriad-players');
@@ -53,6 +60,24 @@ export async function loadAlliancesFromMap(allianceMap: Map<string, Alliance>) {
   }
 }
 
+export async function getAllAlliancesRankings(): Promise<RankedAllianceMetricsById> {
+  const alliancesArr: Alliance[] = await (await dbPromise()).getAll('illyriad-alliances');
+  const allianceByMembers: Alliance[] = alliancesArr.toSorted((a: Alliance, b: Alliance) => {
+    return b.numPlayers - a.numPlayers;
+  });
+  const allianceByTowns: Alliance[] = alliancesArr.toSorted((a: Alliance, b: Alliance) => {
+    return b.numTowns - a.numTowns;
+  });
+  const allianceByPopulation: Alliance[] = alliancesArr.toSorted((a: Alliance, b: Alliance) => {
+    return b.numPopulation - a.numPopulation;
+  });
+  return {
+    byMemberCount: allianceByMembers.map((alliance: Alliance) => alliance.allianceId),
+    byTownCount: allianceByTowns.map((alliance: Alliance) => alliance.allianceId),
+    byPopulationCount: allianceByPopulation.map((alliance: Alliance) => alliance.allianceId),
+  }
+}
+
 export async function getAllTownSearchRows(): Promise<TownSearchRow[]> {
   const townsArr: Town[] = await (await dbPromise()).getAll('illyriad-towns'); //, null, 100);
   const playersArr: Player[] = await (await dbPromise()).getAll('illyriad-players');
@@ -63,21 +88,26 @@ export async function getAllTownSearchRows(): Promise<TownSearchRow[]> {
   return townsArr.map(town => {
     const player = playerIdToPlayerMap.get(town.playerId)!;
     const townSearchRow: TownSearchRow = {
-      townName: town.townName,
+      townId: town.townId,
+      playerId: player.playerId,
+
       playerName: player.playerName,
-      population: town.population,
-      terrainCombatType: town.terrainCombatType,
+      playerType: PlayerType.Normal,
+      playerRace: player.playerRace,
+
+      townName: town.townName,
       mapX: town.mapX,
       mapY: town.mapY,
-      playerRace: player.playerRace,
+      terrainCombatType: town.terrainCombatType,
+      population: town.population,
       isCapitalCity: town.isCapitalCity,
       isAllianceCapitalCity: town.isAllianceCapitalCity,
     }
     if (player.allianceId) {
       const alliance = allianceIdToAllianceMap.get(player.allianceId)!;
+      townSearchRow.allianceId = alliance.allianceId;
       townSearchRow.allianceName = alliance.allianceName;
       townSearchRow.allianceTicker = alliance.allianceTicker;
-      townSearchRow.playerName = `${townSearchRow.playerName} [${alliance.allianceTicker}]`
     }
     return townSearchRow;
   });

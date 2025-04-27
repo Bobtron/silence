@@ -1,5 +1,6 @@
 import {atom} from "jotai";
-import {TownSearchRow} from "@/app/lib/objects/townSearchObjects";
+import {RankedAllianceMetricsById, TownSearchRow} from "@/app/lib/objects/townSearchObjects";
 
-export const dateLastLoadedAtom = atom<Date | null>();
+export const dateLastLoadedAtom = atom<Date>();
 export const townSearchRowsAtom = atom<TownSearchRow[]>([]);
+export const alliancesRankingsAtom = atom<RankedAllianceMetricsById>();

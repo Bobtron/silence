@@ -17,13 +17,9 @@ const LOCALE = 'en';
 
 export default function AppLayoutPreview() {
 
-  const [activeHref, setActiveHref] = useState(
-    ""
-  );
-
-  const [toolsOpen, setToolsOpen] = useState(
-    false
-  );
+  const [activeHref, setActiveHref] = useState("");
+  const [toolsOpen, setToolsOpen] = useState(false);
+  const [navigationOpen, setNavigationOpen] = useState(false);
 
   const handleOnFollow = (event: CustomEvent) => {
     if (!event.detail.external) {
@@ -46,7 +42,12 @@ export default function AppLayoutPreview() {
             ]}
           />
         }
-        navigationOpen={true}
+        navigationOpen={navigationOpen}
+        onNavigationChange={
+          (event: NonCancelableCustomEvent<ChangeDetail>) => {
+            setNavigationOpen(event.detail.open);
+          }
+        }
         navigation={
           <SideNavigation
             onFollow={handleOnFollow}
