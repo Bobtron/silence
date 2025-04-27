@@ -1,14 +1,19 @@
 import {RankedAllianceMetricsById} from "@/app/lib/objects/townSearchObjects";
 
-export const metricToLabelMap = {
-  byMemberCount: (topK: number) => `Top ${topK} by Players`,
-  byTownCount: (topK: number) => `Top ${topK} by Towns`,
-  byPopulationCount: (topK: number) => `Top ${topK} by Population`,
-}
+export const metricToLabelMap: Map<string, (topK: number) => string> = new Map<string, (topK: number) => string>([
+  ['byMemberCount', (topK: number) => `Top ${topK} by Players`],
+  ['byTownCount', (topK: number) => `Top ${topK} by Towns`],
+  ['byPopulationCount', (topK: number) => `Top ${topK} by Population`],
+]);
 
 export const metricToFilteringOptionValue = (topK: number, metric: string) => {
   return `${metric}_${topK}`;
-}
+};
+
+export const metricValueToLabel = (metricValue: string) => {
+  const [metric, topK] = metricValue.split('_');
+  return metricToLabelMap.get(metric)!(parseInt(topK));
+};
 
 export const isAllianceIdInMetric =
   (filteringOptionValue: string, allianceId: string, allAllianceMetrics: RankedAllianceMetricsById): boolean => {

@@ -1,12 +1,12 @@
 'use client';
+
 import {useState} from 'react';
 import {
   AppLayout, AppLayoutProps,
-  BreadcrumbGroup, Container, ContentLayout,
+  BreadcrumbGroup, ContentLayout,
   Flashbar, Header,
   HelpPanel, Link, NonCancelableCustomEvent,
   SideNavigation,
-  SplitPanel,
 } from '@cloudscape-design/components';
 import {I18nProvider} from '@cloudscape-design/components/i18n';
 import messages from '@cloudscape-design/components/i18n/messages/all.en';
@@ -38,7 +38,7 @@ export default function AppLayoutPreview() {
           <BreadcrumbGroup
             items={[
               {text: 'Home', href: '#'},
-              {text: 'Service', href: '#'},
+              {text: 'Reactionary Finder', href: '#'},
             ]}
           />
         }
@@ -53,7 +53,7 @@ export default function AppLayoutPreview() {
             onFollow={handleOnFollow}
             header={{
               href: '#',
-              text: 'Service name',
+              text: 'Reactionary Finder',
             }}
             items={[
             ]}
@@ -93,17 +93,9 @@ export default function AppLayoutPreview() {
               </Header>
             }
           >
-            {/*<Container*/}
-            {/*  header={*/}
-            {/*    <Header variant="h2" description="Container description">*/}
-            {/*      Container header*/}
-            {/*    </Header>*/}
-            {/*  }*/}
-            {/*>*/}
-              <div className="contentPlaceholder">
-                <TownSearch/>
-              </div>
-            {/*</Container>*/}
+            <div className="contentPlaceholder">
+              <TownSearch/>
+            </div>
           </ContentLayout>
         }
       />

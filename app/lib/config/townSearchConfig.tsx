@@ -4,7 +4,12 @@ import {PropertyFilterProps, TableProps} from "@cloudscape-design/components";
 import Link from "@cloudscape-design/components/link";
 import {PropertyFilterProperty} from "@cloudscape-design/collection-hooks";
 import FilteringOption = PropertyFilterProps.FilteringOption;
-import {metricToLabelMap, metricToFilteringOptionValue, isAllianceIdInMetric} from "@/app/lib/config/townSearchMetrics";
+import {
+  metricToLabelMap,
+  metricToFilteringOptionValue,
+  isAllianceIdInMetric,
+  metricValueToLabel
+} from "@/app/lib/config/townSearchMetrics";
 
 export const townSearchColumnDefinitions: TableProps.ColumnDefinition<TownSearchRow>[] = [
   {
@@ -222,7 +227,7 @@ const dynamicFilteringOptions: FilteringOption[] = topKValues.flatMap(topK =>
   metricTypes.map(metricType => ({
     propertyKey: 'allianceId',
     value: metricToFilteringOptionValue(topK, metricType),
-    label: metricToLabelMap[metricType](topK),
+    label: metricToLabelMap.get(metricType)!(topK),
   }))
 );
 
@@ -268,7 +273,9 @@ export const GET_FILTERING_PROPERTIES =
                   return false;
                 }
                 return isAllianceIdInMetric(metricValue, allianceId, allianceRankingsById);
-              } },
+              },
+              format: (metricValue: string): string => metricValueToLabel(metricValue),
+            },
             {
               operator: '!=',
               match: (allianceId: any, metricValue: any) => {
@@ -276,7 +283,9 @@ export const GET_FILTERING_PROPERTIES =
                   return true;
                 }
                 return !isAllianceIdInMetric(metricValue, allianceId, allianceRankingsById);
-              } },
+              },
+              format: (metricValue: string): string => metricValueToLabel(metricValue),
+            },
           ],
           propertyLabel: 'Alliance',
           groupValuesLabel: 'Alliance values',

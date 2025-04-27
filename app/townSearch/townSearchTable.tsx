@@ -109,7 +109,7 @@ export default function TownSearchTable() {
     });
     getAllAlliancesRankings().then((alliancesRankings: RankedAllianceMetricsById) => {
       setAlliancesRankings(alliancesRankings);
-    })
+    });
   }
 
   useEffect(() => {
