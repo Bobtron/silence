@@ -107,10 +107,12 @@ export default function TownSearchTable() {
       setTownSearchRows(filteredTownsWithDistance);
       setIsTableLoading(false);
     });
+    getAllAlliancesRankings().then((alliancesRankings: RankedAllianceMetricsById) => {
+      setAlliancesRankings(alliancesRankings);
+    })
   }
 
   useEffect(() => {
-    // setSearchFilteringProperties(DEFAULT_FILTERING_PROPERTIES);
     getAllAlliancesRankings().then((alliancesRankings: RankedAllianceMetricsById) => {
       setAlliancesRankings(alliancesRankings);
     })
