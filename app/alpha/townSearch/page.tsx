@@ -6,7 +6,9 @@ import {
   BreadcrumbGroup, ContentLayout,
   Flashbar, Header,
   HelpPanel, Link, NonCancelableCustomEvent,
+  Popover,
   SideNavigation,
+  StatusIndicator,
 } from '@cloudscape-design/components';
 import {I18nProvider} from '@cloudscape-design/components/i18n';
 import messages from '@cloudscape-design/components/i18n/messages/all.en';
@@ -88,7 +90,21 @@ export default function AppLayoutPreview() {
         content={
           <ContentLayout
             header={
-              <Header variant="h1" info={<Link variant="info">Info</Link>}>
+              <Header variant="h1" info={
+                <Popover
+                  dismissButton={false}
+                  position="top"
+                  size="small"
+                  triggerType="custom"
+                  content={
+                    <StatusIndicator type="info">
+                      Tool for finding nearby towns with filtering
+                    </StatusIndicator>
+                  }
+                >
+                  <Link variant="info">Info</Link>
+                </Popover>
+              }>
                 Reactionary Finder (Town Search)
               </Header>
             }
