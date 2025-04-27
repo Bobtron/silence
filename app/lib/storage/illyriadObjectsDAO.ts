@@ -10,12 +10,13 @@ import {
   TownSearchRow
 } from "@/app/lib/objects/townSearchObjects";
 
-const dbPromise = () => openDB('illyriad-objects-store', 5, {
-    upgrade(db) {
-      db.deleteObjectStore('illyriad-towns');
-      db.deleteObjectStore('illyriad-players');
-      db.deleteObjectStore('illyriad-alliances');
-      db.deleteObjectStore('illyriad-metadata');
+const dbPromise = () => openDB('illyriad-objects-store', 6, {
+    upgrade(db, oldVersion, newVersion, transaction, event) {
+      console.log(`Upgrading 'illyriad-objects-store' database from version ${oldVersion} to ${newVersion}`);
+      for (let i = db.objectStoreNames.length - 1; i >= 0; i--) {
+        console.log(`Deleting object store ${db.objectStoreNames[i]}`);
+        db.deleteObjectStore(db.objectStoreNames[i]);
+      }
 
       db.createObjectStore('illyriad-towns', {
         keyPath: 'townId',
