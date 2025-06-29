@@ -2,6 +2,7 @@ export enum PlayerType {
   Normal = "",
   Abandoned = "Abandoned",
   Banned = "Banned",
+  Admin = "Developer/GM",
 }
 
 export interface RankedAllianceMetricsById {

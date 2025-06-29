@@ -1,6 +1,6 @@
 'use client';
 
-import {IDBPTransaction, openDB} from 'idb';
+import {openDB} from 'idb';
 import {
   RankedAllianceMetricsById,
   Alliance,
@@ -93,7 +93,7 @@ export async function getAllTownSearchRows(): Promise<TownSearchRow[]> {
       playerId: player.playerId,
 
       playerName: player.playerName,
-      playerType: PlayerType.Normal,
+      playerType: player.playerType,
       playerRace: player.playerRace,
 
       townName: town.townName,

@@ -46,6 +46,14 @@ onmessage = async (e: MessageEvent<File>): Promise<void> => {
         numPopulation: 0,
       }
 
+      if (playerObj.playerName.endsWith("(Abandoned)")) {
+        playerObj.playerType = PlayerType.Abandoned;
+      }
+      // TODO: incomplete, need to check player file for additional banned players
+      if (playerObj.playerName.endsWith(playerObj.playerId)) {
+        playerObj.playerType = PlayerType.Banned;
+      }
+
       if (townStruct['player']['playeralliance']) {
         const allianceObj: Alliance = {
           allianceId: townStruct['player']['playeralliance']['alliancename']['@_id'],
@@ -56,6 +64,9 @@ onmessage = async (e: MessageEvent<File>): Promise<void> => {
           numPlayers: 0,
         }
         playerObj.allianceId = allianceObj.allianceId;
+        if (playerObj.allianceId === "18") { // TODO: move this magic number
+          playerObj.playerType = PlayerType.Admin;
+        }
 
         if (!alliancesObjMap.has(allianceObj.allianceId)) {
           alliancesObjMap.set(allianceObj.allianceId, allianceObj);

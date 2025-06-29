@@ -67,6 +67,12 @@ export const townSearchColumnDefinitions: TableProps.ColumnDefinition<TownSearch
     sortingField: "distance",
   },
   {
+    id: "playerType",
+    header: "Status",
+    cell: (item: TownSearchRow) => item.playerType,
+    sortingField: "playerType",
+  },
+  {
     id: "population",
     header: "Population",
     cell: (item: TownSearchRow) => item.population,
@@ -132,6 +138,10 @@ export const DEFAULT_PREFERENCES: CollectionPreferencesProps.Preferences ={
       visible: true,
     },
     {
+      id: "playerType",
+      visible: false,
+    },
+    {
       id: "population",
       visible: true,
     },
@@ -180,6 +190,10 @@ export const CONTENT_DISPLAY_OPTIONS: CollectionPreferencesProps.ContentDisplayO
     id: "distance",
     label: "Distance",
     alwaysVisible: true,
+  },
+  {
+    id: "playerType",
+    label: "Status",
   },
   {
     id: "population",
