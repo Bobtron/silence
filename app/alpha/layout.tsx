@@ -36,17 +36,19 @@ export default function RootLayout({
           utilities={[
             {
               type: "button",
-              variant: 'link',
-              text: "Play Illyriad",
-              href: "https://elgea.illyriad.co.uk/Account/LogOn",
-              external: true,
-            },
-            {
-              type: "button",
               variant: 'primary-button',
               text: 'Buy me a beer!',
               href: 'https://www.buymeacoffee.com/jusly',
               iconUrl: 'https://assets.illyriad.net/img/icons/beer_48.png',
+              external: true,
+              target: '_blank',
+            },
+            {
+              type: "button",
+              variant: 'primary-button',
+              text: "Play Illyriad",
+              href: "https://elgea.illyriad.co.uk/Account/LogOn",
+              iconUrl: 'https://assets.illyriad.net/img/icons/mana_48.png',
               external: true,
               target: '_blank',
             }

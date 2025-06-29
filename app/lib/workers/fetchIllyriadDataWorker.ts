@@ -3,16 +3,12 @@
 import {Town, Player, Alliance, PlayerType} from "@/app/lib/objects/townSearchObjects";
 import {X2jOptions, XMLParser} from "fast-xml-parser";
 import {
-  clearAllTowns,
-  getAllTownIds, getAllTownSearchRows, loadAlliancesFromMap,
+  loadAlliancesFromMap,
   loadPlayersFromMap,
   loadTownsFromArray, setDataLoadDate,
-  setTown
 } from "@/app/lib/storage/illyriadObjectsDAO";
 
 onmessage = async (e: MessageEvent<File>): Promise<void> => {
-  console.log("Main script fetches town data");
-
   const xmlParserOptions: X2jOptions = {
     ignoreAttributes: false,
   }
@@ -98,11 +94,10 @@ onmessage = async (e: MessageEvent<File>): Promise<void> => {
     await setDataLoadDate(dataGenerationDateTime);
     console.log("Done loading into IndexedDB");
 
-    postMessage(null /*await getAllTownSearchRows()*/);
+    postMessage(null);
 
   } catch (error: any) {
     console.error(error);
     throw error;
   }
 };
-
